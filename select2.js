@@ -2361,12 +2361,20 @@ the specific language governing permissions and limitations under the Apache Lic
                             var ordered = [];
                             for (var i = 0; i < ids.length; i++) {
                                 var id = ids[i];
-                                for (var j = 0; j < matches.length; j++) {
+                                var matched = false;
+                                for (var j = 0; !matched && j < matches.length; j++) {
                                     var match = matches[j];
                                     if (equal(id, opts.id(match))) {
                                         ordered.push(match);
                                         matches.splice(j, 1);
-                                        break;
+                                        matched = true;
+                                    }
+                                }
+                                // If no existing id matched, try createSearchChoice
+                                if (!matched && opts.createSearchChoice) {
+                                    var created = opts.createSearchChoice(id, []);
+                                    if (created) {
+                                        ordered.push(created);
                                     }
                                 }
                             }
